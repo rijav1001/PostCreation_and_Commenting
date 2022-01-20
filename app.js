@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyparser = require('body-parser');
 const mongoose = require('mongoose');
-const imgModel = require('./modelImage.js');
+const imgModel = require('./models/Image');
 const fs = require('fs');
 const path = require('path');
 
@@ -14,6 +14,7 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopol
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
+app.use(express.static('public'));
 
 app.set('view engine', 'ejs');
 
@@ -44,23 +45,20 @@ app.get('/', (req, res) => {
     });
 });
 
-app.post('/', upload.single('image'), (res, req, next) => {
+app.post('/upload', upload.single('image'), async (res, req, next) => {
     const data = {
         name: req.body.name,
+        filename: req.file.filename,
         img: {
             data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
             contentType: 'image/png'
         }
     }
-    imgModel.create(data, (err, res) => {
+    imgModel.create(data, async (err, item) => {
         if (err) {
             console.log(err);
         } else {
-            if (res.name === data.name) {
-                console.log("Post already exists");
-            } else {
-                res.save();
-            }
+            await item.save();
             res.redirect('/');
         }
     });
