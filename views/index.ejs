@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Image Uploading App</title>
+</head>
+<body>
+    <h2>Choose an image to upload</h2>
+    <hr>
+    <div>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <div>
+                <label for="name">Enter Title: </label>
+                <input type="text" id="name" placeholder="Title" value="" name="name" required>
+            </div>
+            <div>
+                <label for="image">Upload</label>
+                <br>
+                <input type="file" class="file" id="image" name="image" value="" required>
+                <br>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+    <h2>Feed</h2>
+    <div>
+        <% image.forEach((item) => { %>
+            <div class="post">
+                <img src="data:item/<%=item.img.contentType%>;base64. <%=item.img.data.toString('base64')%>" alt="retry">
+                <br>
+                <h3>Title: <%= item.name %></h3>
+            </div>
+        <% }) %>
+    </div>
+</body>
+</html>
